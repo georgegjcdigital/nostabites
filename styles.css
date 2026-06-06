@@ -1,0 +1,9 @@
+/* ============================================================
+   NOSTABITES — Global Design System Entry Point
+   Import this one file to get all tokens and font-faces.
+   ============================================================ */
+
+@import './tokens/colors.css';
+@import './tokens/typography.css';
+@import './tokens/spacing.css';
+@import './tokens/effects.css';

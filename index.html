@@ -1,0 +1,178 @@
+<!-- @dsCard group="Website" viewport="1440x900" name="Homepage" subtitle="Full Nostabites website — nav, hero, products, about, CTA, footer" -->
+<!-- @startingPoint section="Website" subtitle="Nostabites homepage with hero, product grid, story, and WhatsApp CTA" viewport="1440x900" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- ═══════════════════════════════════════════
+     BASIC SEO
+     ═══════════════════════════════════════════ -->
+<title>Nostabites — Nostalgia in Every Bite</title>
+<meta name="description" content="Premium homemade Kerala snacks — Kozhukkatta, Pazhampori, Cutlets, Sukiyan and more. Made fresh in small batches with traditional recipes. No preservatives. Order on WhatsApp.">
+<meta name="keywords" content="Kerala snacks, homemade snacks, Kozhukkatta, Pazhampori, Sukiyan, Cutlets, Unniyappam, Achappam, Kerala food, traditional snacks, homemade Kerala food">
+<meta name="author" content="Nostabites">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://nostabites.com/">
+
+<!-- ═══════════════════════════════════════════
+     OPEN GRAPH — Facebook, WhatsApp previews
+     ═══════════════════════════════════════════ -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Nostabites">
+<meta property="og:url" content="https://nostabites.com/">
+<meta property="og:title" content="Nostabites — Nostalgia in Every Bite">
+<meta property="og:description" content="Premium homemade Kerala snacks made fresh with traditional recipes. Kozhukkatta, Pazhampori, Cutlets, Sukiyan and more — no preservatives, no shortcuts.">
+<meta property="og:image" content="https://nostabites.com/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="en_IN">
+
+<!-- ═══════════════════════════════════════════
+     TWITTER / X CARD
+     ═══════════════════════════════════════════ -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@nostabites">
+<meta name="twitter:title" content="Nostabites — Nostalgia in Every Bite">
+<meta name="twitter:description" content="Premium homemade Kerala snacks. Kozhukkatta, Pazhampori, Cutlets, Sukiyan and more — made fresh, no preservatives. Order on WhatsApp.">
+<meta name="twitter:image" content="https://nostabites.com/assets/og.jpg">
+
+<!-- ═══════════════════════════════════════════
+     STRUCTURED DATA — JSON-LD
+     LocalBusiness + WebSite + FAQPage
+     ═══════════════════════════════════════════ -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": ["FoodEstablishment", "LocalBusiness"],
+      "@id": "https://nostabites.com/#business",
+      "name": "Nostabites",
+      "alternateName": "Nostabites Kerala Snacks",
+      "slogan": "Nostalgia in Every Bite",
+      "description": "Premium homemade Kerala snacks made fresh in small batches using traditional recipes and pure local ingredients. No preservatives. No shortcuts. Just pure homemade goodness.",
+      "telephone": "+919207575603",
+      "url": "https://nostabites.com",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://nostabites.com/assets/logo-transparent.png"
+      },
+      "image": "https://nostabites.com/assets/og.jpg",
+      "servesCuisine": ["Kerala", "South Indian"],
+      "hasMenu": "https://nostabites.com/#menu",
+      "priceRange": "₹₹",
+      "address": {
+        "@type": "PostalAddress",
+        "addressRegion": "Kerala",
+        "addressCountry": "IN"
+      },
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "+919207575603",
+        "contactType": "customer service",
+        "availableLanguage": ["English", "Malayalam"]
+      },
+      "sameAs": [
+        "https://wa.me/919207575603",
+        "https://www.instagram.com/nostabites"
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://nostabites.com/#website",
+      "name": "Nostabites",
+      "url": "https://nostabites.com",
+      "publisher": { "@id": "https://nostabites.com/#business" },
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://nostabites.com/#menu?q={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://nostabites.com/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What Kerala snacks does Nostabites make?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Nostabites makes traditional Kerala snacks including Kozhukkatta (steamed coconut-jaggery dumplings), Pazhampori (banana fritters), Cutlets, Sukiyan, Unniyappam (sweet rice cakes) and Achappam (rose cookies) — all made fresh in small batches with no preservatives."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How can I order from Nostabites?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Order directly via WhatsApp at +91 9207575603. Simply message us what you'd like and we'll confirm availability and arrange delivery or pickup. We typically respond within 1 hour."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does Nostabites use preservatives?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. All Nostabites snacks are made fresh in small batches with no preservatives, no artificial additives, and no shortcuts — just traditional Kerala recipes and pure ingredients."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is Kozhukkatta?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Kozhukkatta (കൊഴുക്കട്ട) is a traditional Kerala steamed dumpling made from rice flour dough, filled with freshly grated coconut and dark jaggery. It is a beloved teatime snack across Kerala."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is Pazhampori?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Pazhampori is a Kerala-style banana fritter: ripe banana slices coated in a light spiced batter and deep-fried to a crispy golden finish. One of the most popular teatime snacks in Kerala."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does Nostabites do catering for events?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Nostabites accepts catering orders for events of all sizes. Contact us on WhatsApp at +91 9207575603 to discuss your requirements and quantities."
+          }
+        }
+      ]
+    }
+  ]
+}
+</script>
+
+<link rel="stylesheet" href="./styles.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--cream-50); color: var(--charcoal-900); font-family: var(--font-body); -webkit-font-smoothing: antialiased; }
+  @keyframes nb-fadein { from { opacity: 0; transform: perspective(700px) translateZ(-24px) translateY(28px); } to { opacity: 1; transform: perspective(700px) translateZ(0) translateY(0); } }
+  .nb-reveal { opacity: 0; }
+  .nb-reveal.visible { animation: nb-fadein 0.65s var(--ease-out) forwards; }
+  .nb-reveal-d1.visible { animation-delay: 0.1s; }
+  .nb-reveal-d2.visible { animation-delay: 0.2s; }
+  .nb-reveal-d3.visible { animation-delay: 0.3s; }
+  .nb-reveal-d4.visible { animation-delay: 0.4s; }
+  .nb-reveal-d5.visible { animation-delay: 0.5s; }
+  .nb-reveal-d6.visible { animation-delay: 0.6s; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" src="app.js"></script>
+</body>
+</html>
