@@ -1,9 +1,22 @@
 // Nostabites — Combined app bundle
 // All components in one file; no cross-script window exports needed.
 
+// Responsive breakpoint hook
+function useIsMobile(bp) {
+  bp = bp === undefined ? 768 : bp;
+  const [v, setV] = React.useState(() => window.innerWidth < bp);
+  React.useEffect(() => {
+    const fn = () => setV(window.innerWidth < bp);
+    window.addEventListener('resize', fn, { passive: true });
+    return () => window.removeEventListener('resize', fn);
+  }, [bp]);
+  return v;
+}
+
 // ScrollFX.jsx — scroll progress bar + section depth observer
 function ScrollFX() {
   const [progress, setProgress] = React.useState(0);
+  const isMobile = useIsMobile();
 
   React.useEffect(() => {
     const onScroll = () => {
@@ -21,7 +34,7 @@ function ScrollFX() {
       {/* Gold progress line — sits at the bottom edge of the nav */}
       <div style={{
         position: 'fixed',
-        top: '118px',          /* ticker 34px + nav 84px */
+        top: isMobile ? '94px' : '118px',
         left: 0,
         height: '2px',
         width: `${progress}%`,
@@ -34,7 +47,7 @@ function ScrollFX() {
       {progress > 1 && progress < 99.5 && (
         <div style={{
           position: 'fixed',
-          top: '115px',
+          top: isMobile ? '91px' : '115px',
           left: `calc(${progress}% - 3px)`,
           width: '8px', height: '8px',
           borderRadius: '50%',
@@ -133,6 +146,7 @@ const WaIconNav = () => (
 function Nav() {
   const [scrolled, setScrolled] = React.useState(false);
   const [menuOpen, setMenuOpen] = React.useState(false);
+  const isMobile = useIsMobile();
 
   React.useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 30);
@@ -140,12 +154,20 @@ function Nav() {
     return () => window.removeEventListener('scroll', fn);
   }, []);
 
+  React.useEffect(() => {
+    if (!menuOpen) return;
+    const close = () => setMenuOpen(false);
+    window.addEventListener('scroll', close, { passive: true, once: true });
+    return () => window.removeEventListener('scroll', close);
+  }, [menuOpen]);
+
   const links = ['Menu', 'About', 'Contact'];
+  const navHeight = isMobile ? 60 : 84;
   const navBase = {
     position: 'fixed', top: '34px', left: 0, right: 0,
     zIndex: 400,
-    padding: '0 32px',
-    background: scrolled ? 'rgba(254,252,248,0.94)' : 'rgba(254,252,248,0.75)',
+    padding: isMobile ? '0 16px' : '0 32px',
+    background: (scrolled || menuOpen) ? 'rgba(254,252,248,0.97)' : 'rgba(254,252,248,0.75)',
     backdropFilter: 'blur(12px) saturate(140%)',
     boxShadow: scrolled ? '0 1px 0 rgba(26,16,4,0.07), 0 2px 12px rgba(26,16,4,0.06)' : 'none',
     transition: 'background 250ms ease, box-shadow 250ms ease',
@@ -153,25 +175,57 @@ function Nav() {
 
   return (
     <nav style={navBase}>
-      <div style={{ maxWidth:'1200px', margin:'0 auto', height:'84px', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+      <div style={{ maxWidth:'1200px', margin:'0 auto', height:`${navHeight}px`, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
         <a href="#" style={{ display:'flex', alignItems:'center', textDecoration:'none' }}>
-          <img src="./assets/logo-cropped-tight.png" alt="Nostabites" style={{ height:'80px', width:'auto' }} />
+          <img src="./assets/logo-icon.webp" alt="Nostabites" style={{ height: isMobile ? '48px' : '76px', width:'auto', borderRadius:'var(--radius-md)' }} />
         </a>
-        <div style={{ display:'flex', gap:'36px', alignItems:'center' }}>
-          {links.map(l => (
+
+        {/* Desktop nav links */}
+        {!isMobile && (
+          <div style={{ display:'flex', gap:'36px', alignItems:'center' }}>
+            {links.map(l => (
+              <a key={l} href={`#${l.toLowerCase()}`}
+                style={{ fontFamily:'var(--font-body)', fontSize:'var(--text-sm)', fontWeight:500, color:'var(--charcoal-700)', textDecoration:'none', letterSpacing:'0.03em' }}
+              >{l}</a>
+            ))}
+          </div>
+        )}
+
+        <div style={{ display:'flex', alignItems:'center', gap:'8px' }}>
+          <a href={WA_LINK} target="_blank" rel="noopener noreferrer"
+            style={{ display:'inline-flex', alignItems:'center', gap:'7px', padding: isMobile ? '8px 14px' : '10px 22px', background:'var(--color-whatsapp)', color:'#fff', borderRadius:'9999px', fontFamily:'var(--font-body)', fontSize: isMobile ? '13px' : 'var(--text-sm)', fontWeight:600, textDecoration:'none', letterSpacing:'0.03em', transition:'background 150ms ease', whiteSpace:'nowrap' }}
+            onMouseEnter={e => e.currentTarget.style.background='var(--color-whatsapp-hover)'}
+            onMouseLeave={e => e.currentTarget.style.background='var(--color-whatsapp)'}
+          >
+            <WaIconNav /> {isMobile ? 'Order' : 'Order Now'}
+          </a>
+
+          {/* Hamburger — mobile only */}
+          {isMobile && (
+            <button
+              onClick={() => setMenuOpen(o => !o)}
+              aria-label="Toggle navigation"
+              style={{ background:'none', border:'none', padding:'8px 4px', cursor:'pointer', display:'flex', flexDirection:'column', gap:'5px', alignItems:'center', justifyContent:'center' }}
+            >
+              <span style={{ display:'block', width:'22px', height:'2px', background:'var(--charcoal-800)', borderRadius:'2px', transition:'transform 200ms ease', transform: menuOpen ? 'rotate(45deg) translate(5px, 5px)' : 'none' }} />
+              <span style={{ display:'block', width:'22px', height:'2px', background:'var(--charcoal-800)', borderRadius:'2px', transition:'opacity 200ms ease', opacity: menuOpen ? 0 : 1 }} />
+              <span style={{ display:'block', width:'22px', height:'2px', background:'var(--charcoal-800)', borderRadius:'2px', transition:'transform 200ms ease', transform: menuOpen ? 'rotate(-45deg) translate(5px, -5px)' : 'none' }} />
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Mobile dropdown */}
+      {isMobile && menuOpen && (
+        <div style={{ borderTop:'1px solid var(--cream-200)', background:'rgba(254,252,248,0.98)', backdropFilter:'blur(12px)', display:'flex', flexDirection:'column' }}>
+          {links.map((l, i) => (
             <a key={l} href={`#${l.toLowerCase()}`}
-              style={{ fontFamily:'var(--font-body)', fontSize:'var(--text-sm)', fontWeight:500, color:'var(--charcoal-700)', textDecoration:'none', letterSpacing:'0.03em' }}
+              onClick={() => setMenuOpen(false)}
+              style={{ fontFamily:'var(--font-body)', fontSize:'var(--text-base)', fontWeight:500, color:'var(--charcoal-700)', textDecoration:'none', padding:'14px 20px', borderBottom: i < links.length - 1 ? '1px solid var(--cream-200)' : 'none', letterSpacing:'0.03em' }}
             >{l}</a>
           ))}
         </div>
-        <a href={WA_LINK} target="_blank" rel="noopener noreferrer"
-          style={{ display:'inline-flex', alignItems:'center', gap:'7px', padding:'10px 22px', background:'var(--color-whatsapp)', color:'#fff', borderRadius:'9999px', fontFamily:'var(--font-body)', fontSize:'var(--text-sm)', fontWeight:600, textDecoration:'none', letterSpacing:'0.03em', transition:'background 150ms ease' }}
-          onMouseEnter={e => e.currentTarget.style.background='var(--color-whatsapp-hover)'}
-          onMouseLeave={e => e.currentTarget.style.background='var(--color-whatsapp)'}
-        >
-          <WaIconNav /> Order Now
-        </a>
-      </div>
+      )}
     </nav>
   );
 }
@@ -230,12 +284,14 @@ const DOTS = [
 
 function Hero() {
   const contentRef = React.useRef(null);
+  const isMobile = useIsMobile();
 
   // Scroll parallax — content gently rises and fades as page scrolls down
   React.useEffect(() => {
     const onScroll = () => {
       const el = contentRef.current;
       if (!el) return;
+      if (window.innerWidth < 768) { el.style.transform = ''; el.style.opacity = '1'; return; }
       const scrollY = window.scrollY;
       const vh = window.innerHeight;
       if (scrollY > vh) return;
@@ -252,7 +308,7 @@ function Hero() {
       minHeight:'100vh',
       background:'radial-gradient(ellipse 120% 80% at 50% -5%, var(--cream-50) 0%, var(--cream-200) 100%)',
       display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center',
-      padding:'150px 32px 80px', textAlign:'center',
+      padding: isMobile ? '114px 20px 60px' : '150px 32px 80px', textAlign:'center',
       position:'relative', overflow:'hidden',
     }}>
       {/* Ambient glows */}
@@ -263,7 +319,7 @@ function Hero() {
       {/* Content — scroll parallax applied here */}
       <div ref={contentRef} style={{ maxWidth:'840px', position:'relative', zIndex:1, willChange:'transform, opacity' }}>
 
-        <p style={{ margin:'0 0 18px', fontFamily:'var(--font-body)', fontSize:'11px', fontWeight:700, letterSpacing:'0.18em', textTransform:'uppercase', color:'var(--green-600)', animation:'nb-fade-up 0.7s var(--ease-out) 0.2s both' }}>
+        <p style={{ margin:'0 0 18px', fontFamily:'var(--font-body)', fontSize:'11px', fontWeight:700, letterSpacing: isMobile ? '0.07em' : '0.18em', textTransform:'uppercase', color:'var(--green-600)', animation:'nb-fade-up 0.7s var(--ease-out) 0.2s both', whiteSpace:'nowrap' }}>
           Authentic Kerala Snacks · Homemade with Love
         </p>
 
@@ -271,7 +327,7 @@ function Hero() {
           <div style={{ height:'2px', width:'64px', background:'var(--gold-400)', borderRadius:'2px', transformOrigin:'left center', animation:'nb-line-draw 0.8s cubic-bezier(0.16,1,0.3,1) 0.5s both' }}/>
         </div>
 
-        <h1 style={{ margin:'0 0 28px', fontFamily:'var(--font-display)', fontSize:'clamp(3.5rem,8vw,6rem)', fontWeight:600, lineHeight:1.02, letterSpacing:'-0.02em', color:'var(--charcoal-900)' }}>
+        <h1 style={{ margin:'0 0 28px', fontFamily:'var(--font-display)', fontSize: isMobile ? 'clamp(2rem,10vw,3.2rem)' : 'clamp(3.5rem,8vw,6rem)', fontWeight:600, lineHeight:1.06, letterSpacing:'-0.02em', color:'var(--charcoal-900)' }}>
           <span style={{ display:'block' }}>
             <RevealWord word="Nostalgia" delay="0.65s" style={{ marginRight:'0.22em' }}/>
             <RevealWord word="in" delay="0.82s"/>
@@ -306,7 +362,7 @@ function Hero() {
           </a>
         </div>
 
-        <div style={{ display:'flex', justifyContent:'center', gap:'40px', marginTop:'56px', flexWrap:'wrap', animation:'nb-fade-up 0.8s var(--ease-out) 1.9s both' }}>
+        <div style={{ display:'flex', justifyContent:'center', gap: isMobile ? '24px' : '40px', marginTop: isMobile ? '32px' : '56px', flexWrap:'wrap', animation:'nb-fade-up 0.8s var(--ease-out) 1.9s both' }}>
           {[['100%','Homemade'],['Fresh','Daily'],['Pure','Ingredients']].map(([top,bottom]) => (
             <div key={top} style={{ textAlign:'center' }}>
               <div style={{ fontFamily:'var(--font-display)', fontSize:'1.7rem', fontWeight:600, color:'var(--green-600)', lineHeight:1 }}>{top}</div>
@@ -430,15 +486,16 @@ function ProductItem({ product }) {
 }
 
 function Products() {
+  const isSmall = useIsMobile(640);
   return (
-    <section id="menu" style={{ padding:'96px 32px', background:'#fff' }}>
+    <section id="menu" style={{ padding: isSmall ? '60px 16px' : '96px 32px', background:'#fff' }}>
       <div style={{ maxWidth:'1200px', margin:'0 auto' }}>
-        <div className="nb-reveal" style={{ textAlign:'center', marginBottom:'56px' }}>
+        <div className="nb-reveal" style={{ textAlign:'center', marginBottom: isSmall ? '36px' : '56px' }}>
           <p style={{ margin:'0 0 10px', fontFamily:'var(--font-body)', fontSize:'11px', fontWeight:700, letterSpacing:'0.16em', textTransform:'uppercase', color:'var(--green-600)' }}>Our Specialties</p>
-          <h2 style={{ margin:'0 0 16px', fontFamily:'var(--font-display)', fontSize:'clamp(2.2rem, 5vw, 3.4rem)', fontWeight:600, color:'var(--charcoal-900)', lineHeight:1.05, letterSpacing:'-0.02em' }}>Handcrafted, Every Day</h2>
+          <h2 style={{ margin:'0 0 16px', fontFamily:'var(--font-display)', fontSize: isSmall ? 'clamp(1.6rem, 7vw, 2.2rem)' : 'clamp(2.2rem, 5vw, 3.4rem)', fontWeight:600, color:'var(--charcoal-900)', lineHeight:1.05, letterSpacing:'-0.02em', whiteSpace: isSmall ? 'nowrap' : 'normal' }}>Handcrafted, Every Day</h2>
           <p style={{ margin:0, fontFamily:'var(--font-body)', fontSize:'var(--text-base)', color:'var(--charcoal-500)', lineHeight:1.7, maxWidth:'540px', marginLeft:'auto', marginRight:'auto' }}>Each snack is made fresh in small batches using traditional Kerala recipes. No preservatives. No shortcuts. Just pure homemade goodness.</p>
         </div>
-        <div style={{ display:'grid', gridTemplateColumns:'repeat(2, 1fr)', gap:'24px', maxWidth:'860px', margin:'0 auto' }}>
+        <div style={{ display:'grid', gridTemplateColumns: isSmall ? '1fr' : 'repeat(2, 1fr)', gap:'24px', maxWidth:'860px', margin:'0 auto' }}>
           {PRODUCTS.map((p, i) => (
             <div key={p.name} className={`nb-reveal nb-reveal-d${Math.min(i+1,6)}`}>
               <ProductItem product={p} />
@@ -462,11 +519,13 @@ function About() {
   const sectionRef = React.useRef(null);
   const leftRef    = React.useRef(null);
   const rightRef   = React.useRef(null);
+  const isMobile   = useIsMobile();
 
   React.useEffect(() => {
     const onScroll = () => {
       const sec = sectionRef.current;
       if (!sec) return;
+      if (window.innerWidth < 768) return;
       const rect = sec.getBoundingClientRect();
       const vh   = window.innerHeight;
       if (rect.bottom < 0 || rect.top > vh) return;
@@ -481,10 +540,10 @@ function About() {
   }, []);
 
   return (
-    <section ref={sectionRef} id="about" style={{ background:'var(--cream-200)', padding:'0 0 80px' }}>
+    <section ref={sectionRef} id="about" style={{ background:'var(--cream-200)', padding: isMobile ? '0 0 48px' : '0 0 80px' }}>
 
       {/* ── Full-bleed lifestyle image ───────────────────── */}
-      <div style={{ position:'relative', height:'480px', overflow:'hidden' }}>
+      <div style={{ position:'relative', height: isMobile ? '300px' : '480px', overflow:'hidden' }}>
         <img
           src="./assets/products/lifestyle-chai.png"
           alt="Pazham Pori and Kerala chai on an evening table"
@@ -503,10 +562,10 @@ function About() {
         </div>
       </div>
 
-      <div style={{ maxWidth:'1100px', margin:'0 auto', padding:'72px 32px 0' }}>
+      <div style={{ maxWidth:'1100px', margin:'0 auto', padding: isMobile ? '40px 16px 0' : '72px 32px 0' }}>
 
         {/* ── Memory lead ─────────────────────────────────── */}
-        <div className="nb-reveal" style={{ textAlign:'center', marginBottom:'64px' }}>
+        <div className="nb-reveal" style={{ textAlign:'center', marginBottom: isMobile ? '36px' : '64px' }}>
           <p style={{ fontFamily:'var(--font-body)', fontSize:'var(--text-base)', color:'var(--charcoal-600)', lineHeight:1.85, maxWidth:'720px', margin:'0 auto', textWrap:'pretty' }}>
             The smell of <em>Pazham Pori</em> frying in the kitchen on a rainy evening. The soft sweetness of <em>Kozhukkatta</em>. The comfort of <em>Ila Ada</em> wrapped in banana leaf. The first bite of a warm <em>Sukhiyan</em> after school. The homemade <em>Cutlet</em> shared during family visits, church gatherings, festivals, and evening tea.
           </p>
@@ -516,7 +575,7 @@ function About() {
         </div>
 
         {/* ── Two-column: Story + Features ────────────────── */}
-        <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'72px', alignItems:'start' }}>
+        <div style={{ display:'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? '36px' : '72px', alignItems:'start' }}>
 
           {/* Left — full story */}
           <div ref={leftRef} style={{ willChange:'transform', transition:'transform 0.1s linear' }}>
@@ -575,8 +634,9 @@ function About() {
 
 // WhatsAppCTA.jsx — Order prompt section
 function WhatsAppCTA() {
+  const isMobile = useIsMobile();
   return (
-    <section id="contact" style={{ background:'var(--green-700)', padding:'80px 32px', textAlign:'center', position:'relative', overflow:'hidden' }}>
+    <section id="contact" style={{ background:'var(--green-700)', padding: isMobile ? '56px 20px' : '80px 32px', textAlign:'center', position:'relative', overflow:'hidden' }}>
       {/* Subtle decorative circles */}
       <div style={{ position:'absolute', top:'-60px', right:'-60px', width:'280px', height:'280px', borderRadius:'50%', background:'rgba(255,255,255,0.04)', pointerEvents:'none' }} />
       <div style={{ position:'absolute', bottom:'-40px', left:'-40px', width:'200px', height:'200px', borderRadius:'50%', background:'rgba(255,255,255,0.04)', pointerEvents:'none' }} />
@@ -613,6 +673,7 @@ function WhatsAppCTA() {
 
 // Footer.jsx — Site footer
 function Footer() {
+  const isMobile = useIsMobile();
   const links = [
     { label:'Menu', href:'#menu' },
     { label:'About', href:'#about' },
@@ -620,12 +681,12 @@ function Footer() {
   ];
 
   return (
-    <footer style={{ background:'var(--charcoal-900)', padding:'52px 32px 32px', color:'var(--charcoal-300)' }}>
+    <footer style={{ background:'var(--charcoal-900)', padding: isMobile ? '40px 16px 24px' : '52px 32px 32px', color:'var(--charcoal-300)' }}>
       <div style={{ maxWidth:'1200px', margin:'0 auto' }}>
-        <div style={{ display:'grid', gridTemplateColumns:'2fr 1fr 1fr', gap:'48px', marginBottom:'40px' }}>
+        <div style={{ display:'grid', gridTemplateColumns: isMobile ? '1fr' : '2fr 1fr 1fr', gap: isMobile ? '28px' : '48px', marginBottom:'40px' }}>
           {/* Brand */}
           <div>
-                  <img src="./assets/logo-cropped-tight.png" alt="Nostabites" style={{ height:'90px', width:'auto', display:'block', marginBottom:'16px' }} />
+                  <img src="./assets/logo-footer-cropped.png" alt="Nostabites" style={{ height:'90px', width:'auto', display:'block', marginBottom:'16px' }} />
             <p style={{ margin:'0 0 20px', fontFamily:'var(--font-body)', fontSize:'var(--text-sm)', color:'var(--charcoal-400)', lineHeight:1.7, maxWidth:'300px' }}>
               Premium homemade Kerala snacks made with traditional recipes and the finest local ingredients. Nostalgia in every bite.
             </p>
